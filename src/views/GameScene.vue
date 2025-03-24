@@ -276,6 +276,13 @@ const scenes = {
       { text: '合上日记，离开房间', next: 'leaveAmysRoom' },
     ],
   },
+  leaveAmysRoom: {
+    description: '你离开了艾米的房间，回到走廊。然而，你总觉得有人在暗中注视着你，仿佛艾米的灵魂依然在徘徊。',
+    options: [
+      { text: '前往地下室', next: 'enterBasement' },
+      { text: '回到房间', next: 'returnToRoom' },
+    ],
+  },
   contactAmysSpirit: {
     description: '你低声呼唤艾米的名字，房间的温度骤然下降。你看到墙上的符号开始发光，一个模糊的身影出现在你面前。她低声说道：“救救我……”',
     options: [
@@ -547,6 +554,8 @@ const restartGame = () => {
   currentScene.value = scenes.start;
   isGameOver.value = false;
   endingMessage.value = '';
+  attemptCount.value += 1;
+  localStorage.setItem('attemptCount', attemptCount.value);
 };
 const returnToMainMenu = () => {
   gameStarted.value = false;
