@@ -1,0 +1,1 @@
+{"root":["./src/main.ts","./src/vite-env.d.ts","./src/config/axios/index.ts","./src/router/index.ts","./src/app.vue","./src/components/helloworld.vue","./src/views/home.vue","./src/views/getapi.vue"],"version":"5.6.3"}
