@@ -19,6 +19,8 @@
           @click="chooseOption(option)"
           type="danger"
           class="option-button"
+          text
+          bg
       >
         {{ option.text }}
       </el-button>
