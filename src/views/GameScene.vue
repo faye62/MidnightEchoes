@@ -40,30 +40,73 @@
 </template>
 
 <script setup>
-import { ref ,onMounted} from 'vue';
+import { ref, onMounted } from 'vue';
 import amy from '../assets/img/amy.jpg';
 import mouse from '../assets/img/mouse.jpg';
-import {ElMessageBox} from "element-plus";
+import { ElMessageBox } from 'element-plus';
 
 // 游戏场景数据
 const scenes = {
   start: {
-    description: '你躺在床上，突然被一阵低沉的敲击声惊醒。窗外的月光透过窗帘洒在地板上，映出诡异的影子。敲击声再次响起，似乎来自楼下的地下室。你感到一阵寒意，心跳加速。空气中弥漫着一股霉味，仿佛有什么东西在黑暗中注视着你。',
+    description: '你是一名记者，受委托调查一座废弃公寓的灵异事件。你站在公寓门口，手中握着一份委托书。公寓的门虚掩着，里面传来一阵低沉的敲击声。你深吸一口气，推开门，走了进去。空气中弥漫着一股霉味，仿佛有什么东西在黑暗中注视着你……',
     options: [
-      { text: '起身查看声音的来源', next: 'investigate' },
-      { text: '假装没听见，继续睡觉', next: 'ignore' },
-      { text: '打开手机，看看时间', next: 'checkPhone' },
+      { text: '进入公寓，开始调查', next: 'apartmentLobby' },
+      { text: '离开公寓，放弃任务', next: 'giveUp' },
     ],
   },
-  investigate: {
-    description: '你穿上拖鞋，拿起手电筒，轻轻打开房门。走廊里一片寂静，只有你的脚步声在回荡。你走向楼梯，敲击声越来越清晰。突然，你听到身后传来一阵轻微的呼吸声，仿佛有什么东西正悄悄靠近……',
+  apartmentLobby: {
+    description: '你走进公寓大厅，看到墙上贴满了奇怪的符号。空气中弥漫着一股霉味，仿佛有什么东西在黑暗中注视着你。',
     options: [
-      { text: '顺着楼梯下楼，前往地下室', next: 'basementDoor' },
-      { text: '回到房间，锁上门', next: 'lockDoor' },
+      { text: '查看墙上的符号', next: 'examineSymbols' },
+      { text: '前往走廊', next: 'hallway' },
+      { text: '离开公寓', next: 'giveUp' },
+    ],
+  },
+  examineSymbols: {
+    description: '你仔细观察墙上的符号，发现它们似乎是一种古老的文字。符号中隐藏着“暗影之主”的名字，你感到一阵寒意。',
+    options: [
+      { text: '继续前进', next: 'hallway' },
+      { text: '离开公寓', next: 'giveUp' },
+    ],
+  },
+  hallway: {
+    description: '你顺着走廊前进，看到一扇半开的门。门后传来一阵低语声，仿佛有人在里面说话。你感到一阵寒意，心跳加速。',
+    options: [
+      { text: '推开门，查看房间', next: 'amysRoom' },
+      { text: '继续前进', next: 'basementDoor' },
+    ],
+  },
+  amysRoom: {
+    description: '你来到艾米的房间，发现房间里布满了灰尘，墙上贴满了奇怪的符号。你看到桌上有一本日记，似乎是她留下的。',
+    options: [
+      { text: '查看日记', next: 'readAmysDiary' },
+      { text: '查看照片', next: 'examineFamilyPhoto' },
+      { text: '离开房间', next: 'hallway' },
+    ],
+  },
+  readAmysDiary: {
+    description: '你翻开日记，发现艾米曾是邪教组织的成员，但她试图逃离。最后一页写着：“他们找到了我，我知道我逃不掉了……”',
+    options: [
+      { text: '尝试与艾米的灵魂沟通', next: 'contactAmysSpirit' },
+      { text: '合上日记，离开房间', next: 'amysRoom' },
+    ],
+  },
+  examineFamilyPhoto: {
+    description: '你拿起照片，仔细端详。照片中的艾米笑得灿烂，但她的家人却面无表情。照片背面写着：“我们永远在一起。”你突然感到一阵寒意，仿佛照片中的人正在注视着你。',
+    options: [
+      { text: '将照片放回原处', next: 'amysRoom' },
+      { text: '带走照片', next: 'takeFamilyPhoto' },
+    ],
+  },
+  takeFamilyPhoto: {
+    description: '你拿起照片，准备离开房间。突然，你听到身后传来低语声：“你找到了真相，但真相会吞噬你……”你感到一阵寒意，迅速离开了房间。',
+    options: [
+      { text: '前往走廊', next: 'hallway' },
+      { text: '前往地下室', next: 'basementDoor' },
     ],
   },
   basementDoor: {
-    description: '你走到地下室门口，发现门虚掩着。手电筒的光束照进门缝，你看到地上有一串湿漉漉的脚印，似乎刚刚有人经过。空气中弥漫着一股铁锈和腐烂的气味，你感到一阵恶心。突然，你听到门后传来一阵低语声：“进来吧……”',
+    description: '你走到地下室门口，发现门虚掩着。手电筒的光束照进门缝，你看到地上有一串湿漉漉的脚印，似乎刚刚有人经过。空气中弥漫着一股铁锈和腐烂的气味，你感到一阵恶心。',
     options: [
       { text: '推开门，进入地下室', next: 'enterBasement' },
       { text: '转身逃跑，回到房间', next: 'returnToRoom' },
@@ -156,14 +199,14 @@ const scenes = {
     ending: '你被黑影拖出窗外，消失在夜色中。',
   },
   callPolice: {
-    description: '你拨打了警察的电话，但电话那头只有杂音。突然，你听到门外传来脚步声，似乎有人正在靠近你的房间。电话那头传来一阵低沉的笑声：“你逃不掉的……”你感到一阵寒意，迅速挂断了电话。',
+    description: '你拨打了警察的电话，但电话那头只有杂音。突然，你听到门外传来脚步声，似乎有人正在靠近你的房间。',
     options: [
       { text: '打开门查看', next: 'openDoor' },
       { text: '躲进衣柜', next: 'hideInCloset' },
     ],
   },
   openDoor: {
-    description: '你打开门，发现门外空无一人。但当你转身时，一个黑影从背后扑向你……',
+    description: '你打开门，发现门外空无一人。但当你转身时，一个黑影从背后扑向你。你感到一阵剧痛，意识逐渐模糊。黑影低声说道：“你终于来了……”',
     options: [],
     ending: '你被黑影袭击，永远消失。',
   },
@@ -188,25 +231,25 @@ const scenes = {
   },
   // 合并后的场景：邪教仪式与艾米的命运
   openTruthDoor: {
-    description: '你再次来到地下室，用钥匙打开了那扇刻有符号的门。门后是一个黑暗的房间，墙上写满了奇怪的符号。房间中央有一个祭坛，上面摆放着一本厚重的古书和几根蜡烛。',
+    description: '你再次来到地下室，用钥匙打开了那扇刻有符号的门。门后是一个黑暗的房间，墙上写满了奇怪的符号。房间中央有一个祭坛，上面摆放着一本厚重的古书和几根蜡烛。空气中弥漫着一股铁锈和腐烂的气味，你感到一阵恶心。',
     options: [
       { text: '查看古书', next: 'readAncientBook' },
       { text: '点燃蜡烛', next: 'lightCandles' },
-      { text: '离开房间', next: 'leaveRitualRoom' },
+      { text: '离开房间', next: 'hallway' },
     ],
   },
   readAncientBook: {
-    description: '你翻开古书，发现里面记载着一种古老的仪式。原来这座公寓曾是一个邪教组织的据点，他们试图通过仪式召唤某种不可名状的存在。书中详细描述了他们的信仰：他们崇拜一位名为“暗影之主”的存在，认为只有通过献祭纯洁的灵魂，才能获得永生和力量。最后一页写着：“只有献祭才能平息祂的愤怒。”',
+    description: '你翻开古书，发现里面记载着一种古老的仪式。原来这座公寓曾是一个邪教组织的据点，他们试图通过仪式召唤“暗影之主”。书中详细描述了他们的信仰：他们崇拜一位名为“暗影之主”的存在，认为只有通过献祭纯洁的灵魂，才能获得永生和力量。最后一页写着：“只有献祭才能平息祂的愤怒。”',
     options: [
       { text: '继续阅读，寻找更多线索', next: 'findSacrificeClue' },
-      { text: '合上书本，离开房间', next: 'leaveRitualRoom' },
+      { text: '合上书本，离开房间', next: 'openTruthDoor' },
     ],
   },
   exploreAttic: {
     description: '你决定探索公寓的阁楼。阁楼里堆满了破旧的家具和箱子，空气中弥漫着霉味。你在一个箱子里发现了一本泛黄的相册，里面是邪教成员的照片，还有一些仪式记录。最后一页写着：“艾米是最完美的祭品，她的灵魂将为我们打开通往暗影之主的门。”',
     options: [
       { text: '带走相册，继续调查', next: 'takePhotoAlbum' },
-      { text: '离开阁楼，回到走廊', next: 'leaveAttic' },
+      { text: '离开阁楼，回到走廊', next: 'hallway' },
     ],
   },
   leaveAttic: {
@@ -270,15 +313,30 @@ const scenes = {
       { text: '在网上搜索艾米的信息', next: 'searchOnline' },
     ],
   },
-  searchOnline: {
-    description: '你在网上搜索艾米的信息，发现她在五年前神秘失踪，警方至今没有找到她的下落。你感到一阵不安，决定前往她的房间查看。',
+  askManagement: {
+    description: '你来到公寓管理处，管理员告诉你：“这座公寓曾是一个邪教组织的据点，他们试图通过仪式召唤‘暗影之主’。艾米是他们的最后一位祭品，她的灵魂被困在公寓中。”',
     options: [
-      { text: '前往艾米的房间', next: 'enterAmysRoom' },
-      { text: '放弃调查', next: 'giveUpInvestigation' },
+      { text: '询问更多信息', next: 'askMoreInfo' },
+      { text: '离开管理处', next: 'hallway' },
     ],
   },
-  askManagement: {
-    description: '你来到公寓管理处，管理员告诉你艾米在五年前神秘失踪，她的房间至今空置。你感到一阵不安，决定前往她的房间查看。',
+  askMoreInfo: {
+    description: '管理员低声说道：“如果你想结束诅咒，必须找到艾米的遗物。它们被藏在公寓的不同地方。”',
+    options: [
+      { text: '感谢管理员', next: 'hallway' },
+      { text: '询问遗物的位置', next: 'askAboutRelics' },
+    ],
+  },
+  askAboutRelics: {
+    description: '管理员递给你一张纸条，上面写着三个地点：洗衣房、储物室和屋顶。你需要找到艾米的遗物，才能完成仪式。',
+    options: [
+      { text: '前往洗衣房', next: 'goToLaundryRoom' },
+      { text: '前往储物室', next: 'goToStorageRoom' },
+      { text: '前往屋顶', next: 'goToRoof' },
+    ],
+  },
+  searchOnline: {
+    description: '你在网上搜索艾米的信息，发现她在五年前神秘失踪，警方至今没有找到她的下落。你感到一阵不安，决定前往她的房间查看。',
     options: [
       { text: '前往艾米的房间', next: 'enterAmysRoom' },
       { text: '放弃调查', next: 'giveUpInvestigation' },
@@ -291,105 +349,6 @@ const scenes = {
       { text: '用被子蒙住头，继续睡觉', next: 'badEnding2' },
     ],
   },
-  enterAmysRoom: {
-    description: '你来到艾米的房间，发现门没有上锁。房间里布满了灰尘，墙上贴满了奇怪的符号。你看到桌上有一本日记，似乎是她留下的。房间里还有一张破旧的照片，上面是艾米和她的家人，照片背面写着：“我们永远在一起。”',
-    options: [
-      { text: '查看日记', next: 'readAmysDiary' },
-      { text: '查看照片', next: 'examineFamilyPhoto' },
-      { text: '离开房间', next: 'leaveAmysRoom' },
-    ],
-  },
-  examineFamilyPhoto: {
-    description: '你拿起照片，仔细端详。照片中的艾米笑得灿烂，但她的家人却面无表情。照片背面写着：“我们永远在一起。”你突然感到一阵寒意，仿佛照片中的人正在注视着你。',
-    options: [
-      { text: '将照片放回原处', next: 'enterAmysRoom' },
-      { text: '带走照片', next: 'takeFamilyPhoto' },
-    ],
-  },
-  leaveAmysRoom: {
-    description: '你离开了艾米的房间，回到走廊。然而，你总觉得有人在暗中注视着你，仿佛艾米的灵魂依然在徘徊。',
-    options: [
-      { text: '前往地下室', next: 'enterBasement' },
-      { text: '回到房间', next: 'returnToRoom' },
-    ],
-  },
-  readAmysDiary: {
-    description: '你翻开日记，发现艾米曾是邪教组织的成员，但她试图逃离。最后一页写着：“他们找到了我，我知道我逃不掉了……”',
-    options: [
-      { text: '尝试与艾米的灵魂沟通', next: 'contactAmysSpirit' },
-      { text: '合上日记，离开房间', next: 'leaveAmysRoom' },
-    ],
-  },
-  contactAmysSpirit: {
-    description: '你低声呼唤艾米的名字，房间的温度骤然下降。你看到墙上的符号开始发光，一个模糊的身影出现在你面前。她低声说道：“救救我……”',
-    options: [
-      { text: '询问如何救她', next: 'askHowToSaveHer' },
-      { text: '逃离房间', next: 'fleeFromSpirit' },
-    ],
-  },
-  askHowToSaveHer: {
-    description: '艾米的灵魂低声说道：“只有完成仪式，才能结束诅咒。但你必须找到我的遗物，它们被藏在公寓的不同地方。”',
-    options: [
-      { text: '答应帮助她', next: 'agreeToHelp' },
-      { text: '拒绝帮助她', next: 'refuseToHelp' },
-    ],
-  },
-  agreeToHelp: {
-    description: '你答应帮助艾米，她的灵魂递给你一张纸条，上面写着三个地点：洗衣房、储物室和屋顶。你需要找到她的遗物，才能完成仪式。',
-    options: [
-      { text: '前往洗衣房', next: 'goToLaundryRoom' },
-      { text: '前往储物室', next: 'goToStorageRoom' },
-      { text: '前往屋顶', next: 'goToRoof' },
-    ],
-  },
-  takeBackpack: {
-    description: '你拿起背包，准备前往下一个地点。突然，你听到身后传来低语声：“你找到了第一个……”',
-    options: [
-      { text: '前往储物室', next: 'goToStorageRoom' },
-      { text: '前往屋顶', next: 'goToRoof' },
-    ],
-  },
-  takeNecklace: {
-    description: '你拿起项链，突然感到一阵寒意。低语声再次响起：“你找到了第二个……”',
-    options: [
-      { text: '前往屋顶', next: 'goToRoof' },
-    ],
-  },
-  takeRing: {
-    description: '你拿起戒指，突然听到艾米的声音：“谢谢你……现在，请完成仪式。”',
-    options: [
-      { text: '完成仪式', next: 'completeRitual' },
-    ],
-  },
-  completeRitual: {
-    description: '你回到地下室，将艾米的遗物放在祭坛上。墙上的符号开始发光，低语声越来越响。你感到一股强大的力量在房间中涌动。',
-    options: [
-      { text: '献祭艾米', next: 'sacrificeAmy' },
-      { text: '拒绝献祭', next: 'refuseSacrifice' },
-    ],
-  },
-  sacrificeAmy: {
-    description: '你低声念出仪式的内容，艾米的灵魂逐渐消散。低语声停止了，房间恢复了平静。你感到诅咒已经被解除。但空气中依然弥漫着一股寒意。你突然听到身后传来一阵低语：“你以为一切都结束了吗？”',
-    image: amy,
-    options: [],
-    ending: '你完成了仪式，诅咒被解除。',
-  },
-  refuseSacrifice: {
-    description: '你拒绝献祭艾米，低语声突然变得愤怒。墙上的符号开始燃烧，你感到一股强大的力量将你拖入黑暗。艾米的灵魂发出一声凄厉的尖叫：“你背叛了我……”',
-    options: [],
-    ending: '你被诅咒吞噬，永远消失在地下室中。',
-  },
-  fleeFromSpirit: {
-    description: '你逃离了房间，回到自己的房间。然而，你总觉得有人在暗中注视着你，仿佛艾米的灵魂依然在徘徊。',
-    options: [],
-    ending: '你选择逃避，但诅咒依然如影随形。',
-  },
-  refuseToHelp: {
-    description: '你拒绝了艾米的请求，她的灵魂发出一声凄厉的尖叫。房间的温度骤降，你感到一股强大的力量将你拖入黑暗。',
-    options: [],
-    ending: '你被诅咒吞噬，永远消失在地下室中。',
-  },
-  //洗衣房的秘密
   goToLaundryRoom: {
     description: '你来到洗衣房，发现角落里有一个破旧的背包。你打开背包，发现里面是艾米的日记本和一张照片。洗衣房的灯光忽明忽暗，你听到远处传来低沉的脚步声。',
     options: [
@@ -417,6 +376,7 @@ const scenes = {
     options: [
       { text: '尝试打开门', next: 'tryOpenLaundryDoor' },
       { text: '查看背包', next: 'takeBackpack' },
+      { text: '查看照片', next: 'examinePhoto' },
     ],
   },
   tryOpenLaundryDoor: {
@@ -431,7 +391,6 @@ const scenes = {
       { text: '前往屋顶', next: 'goToRoof' },
     ],
   },
-  //储物室的恐怖
   goToStorageRoom: {
     description: '你来到储物室，发现角落里有一个锁着的箱子。你用艾米的钥匙打开箱子，发现里面是她的项链和一张纸条，上面写着：“屋顶是最后的线索。”储物室的灯光开始闪烁，你听到角落里传来低沉的呼吸声。',
     options: [
@@ -459,7 +418,6 @@ const scenes = {
       { text: '前往洗衣房', next: 'goToLaundryRoom' },
     ],
   },
-  //屋顶的真相
   goToRoof: {
     description: '你来到屋顶，发现角落里有一个破旧的盒子。你打开盒子，发现里面是艾米的戒指和一张纸条，上面写着：“完成仪式，结束诅咒。”屋顶的风声呼啸，你感到一阵不安。',
     options: [
@@ -487,7 +445,30 @@ const scenes = {
       { text: '回到房间', next: 'returnToRoom' },
     ],
   },
-  //逃离公寓
+  takeRing: {
+    description: '你拿起戒指，突然听到艾米的声音：“谢谢你……现在，请完成仪式。”',
+    options: [
+      { text: '完成仪式', next: 'completeRitual' },
+    ],
+  },
+  completeRitual: {
+    description: '你回到地下室，将艾米的遗物放在祭坛上。墙上的符号开始发光，低语声越来越响。你感到一股强大的力量在房间中涌动。',
+    options: [
+      { text: '献祭艾米', next: 'sacrificeAmy' },
+      { text: '拒绝献祭', next: 'refuseSacrifice' },
+    ],
+  },
+  sacrificeAmy: {
+    description: '你低声念出仪式的内容，艾米的灵魂逐渐消散。低语声停止了，房间恢复了平静。你感到诅咒已经被解除。',
+    image: amy,
+    options: [],
+    ending: '你完成了仪式，诅咒被解除。艾米的灵魂被解救……',
+  },
+  refuseSacrifice: {
+    description: '你拒绝献祭艾米，低语声突然变得愤怒。墙上的符号开始燃烧，你感到一股强大的力量将你拖入黑暗。',
+    options: [],
+    ending: '你被诅咒吞噬，永远消失在地下室中。',
+  },
   escapeApartment: {
     description: '你冲向公寓的出口，但门被锁上了。你听到身后传来低语声：“你逃不掉的……”',
     options: [
@@ -505,8 +486,12 @@ const scenes = {
     options: [],
     ending: '你被困在公寓中，成为了下一个受害者。',
   },
+  giveUp: {
+    description: '你决定放弃调查，离开了公寓。然而，你总觉得有人在暗中注视着你，仿佛诅咒的力量已经盯上了你。',
+    options: [],
+    ending: '你选择逃避，但诅咒依然如影随形。',
+  },
 };
-
 
 // 当前场景
 const currentScene = ref(scenes.start);
@@ -635,7 +620,7 @@ onMounted(() => {
 }
 
 .el-button+.el-button {
-  margin-left: 0px;
+  margin-left: 0;
 }
 .scene-image{
   display: flex;
